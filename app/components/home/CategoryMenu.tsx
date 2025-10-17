@@ -4,12 +4,14 @@ import Image from "next/image";
 import { categories } from "@/app/lib/data";
 
 const CategoryMenu = () => {
+  const mainCategories = categories.filter(category => !category.parentId);
+
   return (
     <div className="fixed top-20 self-start h-screen">
       <h2 className="text-lg font-bold text-gray-900 mb-4">Categories</h2>
       <div className="max-h-[80vh] overflow-y-auto pr-4">
         <ul className="space-y-2">
-          {categories.map((category) => (
+          {mainCategories.map((category) => (
             <li key={category.id}>
               <Link
                 href={`/shop/${category.slug}`}
