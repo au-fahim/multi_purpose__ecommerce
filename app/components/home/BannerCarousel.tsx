@@ -11,9 +11,11 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 const bannerImages = [
-  "/images/bag1.jpg",
-  "/images/shoe1.jpg",
-  "/images/jewelry1.jpg",
+  "/images/placeholder_images/HeroBanner.png",
+  "/images/placeholder_images/HeroBanner.png",
+  "/images/placeholder_images/HeroBanner.png",
+  "/images/placeholder_images/HeroBanner.png",
+  "/images/placeholder_images/HeroBanner.png",
 ];
 
 const BannerCarousel = () => {
