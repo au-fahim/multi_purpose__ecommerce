@@ -15,6 +15,7 @@ export type Product = {
   rating?: number;
   reviewsCount?: number;
   stock: number;
+  unitsSold?: number;
   variants?: Array<{ id: string; name: string; price: number; stock: number }>;
   attributes?: Record<string, string>;
   isFavourite?: boolean;
@@ -109,6 +110,7 @@ export const products: Product[] = [
     rating: 4.5,
     reviewsCount: 120,
     stock: 15,
+    unitsSold: 50,
     attributes: { color: "Brown", material: "Leather" },
     isFavourite: true,
   },
@@ -127,7 +129,26 @@ export const products: Product[] = [
     rating: 4.8,
     reviewsCount: 250,
     stock: 25,
+    unitsSold: 100,
     attributes: { color: "Black", material: "Nylon" },
+  },
+  {
+    id: "abb-889572188146",
+    slug: "stylish-shoulder-bag",
+    title: "Stylish Shoulder Bag",
+    shortDescription: "A stylish shoulder bag for everyday use.",
+    description:
+      "This stylish shoulder bag is perfect for everyday use. It has a spacious interior and multiple pockets for organization.",
+    price: 150.0,
+    currency: "BDT",
+    images: ["/images/bag2.jpg"],
+    categoryId: "crossbody-bags",
+    brand: "LAOBAAN",
+    rating: 4.7,
+    reviewsCount: 180,
+    stock: 22,
+    unitsSold: 80,
+    attributes: { color: "Blue", material: "Canvas" },
   },
   // Shoes
   {
@@ -145,6 +166,7 @@ export const products: Product[] = [
     rating: 4.9,
     reviewsCount: 88,
     stock: 10,
+    unitsSold: 30,
     variants: [
       { id: "variant-1", name: "Size 7", price: 250.0, stock: 5 },
       { id: "variant-2", name: "Size 8", price: 250.0, stock: 5 },
@@ -166,7 +188,26 @@ export const products: Product[] = [
     rating: 4.2,
     reviewsCount: 310,
     stock: 50,
+    unitsSold: 200,
     attributes: { color: "White", material: "Canvas" },
+  },
+  {
+    id: "abb-943245158886",
+    slug: "leather-boots",
+    title: "Leather Boots",
+    shortDescription: "Stylish leather boots for any occasion.",
+    description:
+      "These leather boots are perfect for any occasion. They are comfortable and stylish.",
+    price: 350.0,
+    currency: "BDT",
+    images: ["/images/shoe1.jpg"],
+    categoryId: "heels",
+    brand: "LAOBAAN",
+    rating: 4.8,
+    reviewsCount: 120,
+    stock: 15,
+    unitsSold: 40,
+    attributes: { color: "Black", material: "Leather" },
   },
   // Jewelry
   {
@@ -184,6 +225,7 @@ export const products: Product[] = [
     rating: 4.7,
     reviewsCount: 150,
     stock: 30,
+    unitsSold: 120,
     attributes: { material: "Sterling Silver" },
   },
   {
@@ -201,8 +243,27 @@ export const products: Product[] = [
     rating: 4.6,
     reviewsCount: 95,
     stock: 20,
+    unitsSold: 90,
     attributes: { material: "Gold Plated" },
   },
+  {
+    id: "abb-663422007189",
+    slug: "pearl-necklace",
+    title: "Pearl Necklace",
+    shortDescription: "An elegant pearl necklace.",
+    description:
+      "This elegant pearl necklace is a timeless piece of jewelry. It is perfect for special occasions.",
+    price: 220.0,
+    currency: "BDT",
+    images: ["/images/jewelry2.jpg"],
+    categoryId: "necklaces",
+    brand: "LAOBAAN",
+    rating: 4.9,
+    reviewsCount: 110,
+    stock: 18,
+    unitsSold: 70,
+    attributes: { material: "Pearl" },
+  }
 ];
 
 // Helper function to get products by category
