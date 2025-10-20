@@ -4,7 +4,7 @@ import ProductCard from "@/app/components/ProductCard";
 import { notFound } from "next/navigation";
 import ShopLayout from "@/app/components/ShopLayout";
 import SubCategoryList from "@/app/components/SubCategoryList";
-import FilterSidebar from "@/app/components/FilterSidebar";
+import CategoryMenu from "@/app/components/home/CategoryMenu";
 
 interface CategoryPageProps {
   params: {
@@ -22,7 +22,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   }
 
   return (
-    <ShopLayout sidebar={<FilterSidebar />}>
+    <ShopLayout sidebar={<CategoryMenu />}>
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-extrabold tracking-tight text-gray-900 capitalize">
           SHOWING RESULTS FOR "{currentCategory?.name || category}"

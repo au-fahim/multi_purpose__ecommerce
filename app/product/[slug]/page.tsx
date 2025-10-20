@@ -1,7 +1,17 @@
-// app/product/[slug]/page.tsx
-import { getProductBySlug } from "@/app/lib/data";
+"use client";
+
+import { useState } from "react";
+import { getProductBySlug, products, Product } from "@/app/lib/data";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Heart, ShoppingCart } from "lucide-react";
+import ShopLayout from "@/app/components/ShopLayout";
+import CategoryMenu from "@/app/components/home/CategoryMenu";
+import ProductCard from "@/app/components/ProductCard";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
 
 interface ProductPageProps {
   params: {
@@ -9,74 +19,177 @@ interface ProductPageProps {
   };
 }
 
+const ProductTabs = ({ product }: { product: Product }) => {
+  const [activeTab, setActiveTab] = useState("description");
+
+  return (
+    <div>
+      <div className="border-b border-gray-200">
+        <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+          <button
+            onClick={() => setActiveTab("description")}
+            className={`${
+              activeTab === "description"
+                ? "border-indigo-500 text-indigo-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+          >
+            Description
+          </button>
+          <button
+            onClick={() => setActiveTab("specification")}
+            className={`${
+              activeTab === "specification"
+                ? "border-indigo-500 text-indigo-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+          >
+            Specification
+          </button>
+          <button
+            onClick={() => setActiveTab("warranty")}
+            className={`${
+              activeTab === "warranty"
+                ? "border-indigo-500 text-indigo-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+          >
+            Warranty
+          </button>
+        </nav>
+      </div>
+      <div className="mt-6">
+        {activeTab === "description" && (
+          <p className="text-gray-700">{product.description}</p>
+        )}
+        {activeTab === "specification" && (
+          <div>
+            <h3 className="font-bold">Specification</h3>
+            <ul className="list-disc list-inside mt-2">
+              {product.attributes &&
+                Object.entries(product.attributes).map(([key, value]) => (
+                  <li key={key}>
+                    <span className="font-semibold">{key}:</span> {value}
+                  </li>
+                ))}
+            </ul>
+          </div>
+        )}
+        {activeTab === "warranty" && (
+          <div>
+            <h3 className="font-bold">Warranty</h3>
+            <p>Standard 1-year warranty.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export default function ProductPage({ params }: ProductPageProps) {
   const { slug } = params;
   const product = getProductBySlug(slug);
+  const [selectedImage, setSelectedImage] = useState(
+    product ? product.images[0] : ""
+  );
 
   if (!product) {
     notFound();
   }
 
+  const relatedProducts = products.filter(
+    (p) => p.categoryId === product.categoryId && p.id !== product.id
+  );
+  const recentlyViewedProducts = products.slice(0, 3);
+
   return (
-    <div className="bg-white">
-      <div className="pt-6">
-        {/* Image gallery */}
-        <div className="mt-6 max-w-2xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-8">
-            <div className="aspect-w-4 aspect-h-5 sm:rounded-lg sm:overflow-hidden lg:aspect-w-3 lg:aspect-h-4">
+    <ShopLayout sidebar={<CategoryMenu />}>
+      {/* Section 1 */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-1">
+          <div className="mb-4">
+            <Image
+              src={selectedImage}
+              alt={product.title}
+              width={500}
+              height={500}
+              className="w-full h-auto object-cover rounded-lg"
+            />
+          </div>
+          <div className="flex space-x-2">
+            {product.images.map((image, index) => (
+              <button key={index} onClick={() => setSelectedImage(image)}>
                 <Image
-                src={product.images[0]}
-                alt={product.title}
-                width={1000}
-                height={1000}
-                className="w-full h-full object-center object-cover"
+                  src={image}
+                  alt={`${product.title} thumbnail ${index + 1}`}
+                  width={100}
+                  height={100}
+                  className={`w-20 h-20 object-cover rounded-lg border-2 ${
+                    selectedImage === image
+                      ? "border-indigo-500"
+                      : "border-transparent"
+                  }`}
                 />
-            </div>
-        </div>
-
-        {/* Product info */}
-        <div className="max-w-2xl mx-auto pt-10 pb-16 px-4 sm:px-6 lg:max-w-7xl lg:pt-16 lg:pb-24 lg:px-8 lg:grid lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8">
-          <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
-            <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
-              {product.title}
-            </h1>
-          </div>
-
-          {/* Options */}
-          <div className="mt-4 lg:mt-0 lg:row-span-3">
-            <h2 className="sr-only">Product information</h2>
-            <p className="text-3xl text-gray-900">
-              {product.salePrice ? (
-                <>
-                  <span className="text-red-500">${product.salePrice.toFixed(2)}</span>
-                  <span className="line-through ml-2 text-gray-500">${product.price.toFixed(2)}</span>
-                </>
-              ) : (
-                `$${product.price.toFixed(2)}`
-              )}
-            </p>
-
-            <form className="mt-10">
-              <button
-                type="submit"
-                className="mt-10 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Add to bag
               </button>
-            </form>
+            ))}
           </div>
+        </div>
+        <div className="lg:col-span-2">
+          <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
+          {/* Color and Size options can be added here */}
+          <div className="flex items-center space-x-4 mb-4">
+            <button className="flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+              <ShoppingCart className="mr-2" size={20} />
+              Add to Cart
+            </button>
+            <button className="flex items-center justify-center px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
+              <Heart className="mr-2" size={20} />
+              Save
+            </button>
+            <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+              Buy Now
+            </button>
+          </div>
+          <p className="text-sm text-gray-500">Product Code: {product.id}</p>
+        </div>
+      </div>
 
-          <div className="py-10 lg:pt-6 lg:pb-16 lg:col-start-1 lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
-            {/* Description and details */}
-            <div>
-              <h3 className="sr-only">Description</h3>
-
-              <div className="space-y-6">
-                <p className="text-base text-gray-900">{product.description}</p>
-              </div>
-            </div>
+      {/* Section 2 */}
+      <div className="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          <ProductTabs product={product} />
+        </div>
+        <div className="lg:col-span-1">
+          <h2 className="text-xl font-bold mb-4">Recently Viewed Products</h2>
+          <div className="space-y-4">
+            {recentlyViewedProducts.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Section 3 */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-bold mb-6">Related Products</h2>
+        <Swiper
+          modules={[Navigation]}
+          spaceBetween={20}
+          slidesPerView={1.5}
+          navigation
+          breakpoints={{
+            640: { slidesPerView: 2, spaceBetween: 20 },
+            768: { slidesPerView: 3, spaceBetween: 30 },
+            1024: { slidesPerView: 4, spaceBetween: 40 },
+          }}
+        >
+          {relatedProducts.map((p) => (
+            <SwiperSlide key={p.id}>
+              <ProductCard product={p} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+    </ShopLayout>
   );
 }

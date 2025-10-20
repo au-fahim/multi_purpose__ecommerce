@@ -5,11 +5,16 @@ import Link from "next/link";
 import { ShoppingBag, Heart, User } from "lucide-react";
 import useCart from "@/app/hooks/useCart";
 import useAuth from "@/app/hooks/useAuth";
+import useWishlist from "@/app/hooks/useWishlist";
 import SearchBar from "./searchbar";
 
 const Header = () => {
   const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
   const { isAuthenticated } = useAuth();
+
+  console.log("Header - cartCount:", cartCount);
+  console.log("Header - wishlistCount:", wishlistCount);
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -27,13 +32,18 @@ const Header = () => {
             {/* Icons */}
             <div className="flex items-center space-x-4">
               <Link
-                href="/"
+                href="/wishlist"
                 className="text-gray-500 hover:text-gray-700 relative"
               >
                 <Heart className="h-6 w-6" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                )}
               </Link>
               <Link
-                href="/"
+                href="/cart"
                 className="text-gray-500 hover:text-gray-700 relative"
               >
                 <ShoppingBag className="h-6 w-6" />
@@ -76,13 +86,18 @@ const Header = () => {
           {/* Icons */}
           <div className="flex items-center space-x-4">
             <Link
-              href="/"
+              href="/wishlist"
               className="text-gray-500 hover:text-gray-700 relative"
             >
               <Heart className="h-6 w-6" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
             <Link
-              href="/"
+              href="/cart"
               className="text-gray-500 hover:text-gray-700 relative"
             >
               <ShoppingBag className="h-6 w-6" />
