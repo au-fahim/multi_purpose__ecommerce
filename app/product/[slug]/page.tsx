@@ -12,6 +12,9 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import React from "react";
+import useCart from "@/app/hooks/useCart";
+import useWishlist from "@/app/hooks/useWishlist";
 
 interface ProductPageProps {
   params: {
@@ -86,16 +89,30 @@ const ProductTabs = ({ product }: { product: Product }) => {
   );
 };
 
-export default function ProductPage({ params }: ProductPageProps) {
+export default function ProductPage({ params: paramsPromise }: { params: Promise<{ slug: string }> }) {
+  const params = React.use(paramsPromise);
   const { slug } = params;
   const product = getProductBySlug(slug);
   const [selectedImage, setSelectedImage] = useState(
     product ? product.images[0] : ""
   );
 
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+
   if (!product) {
     notFound();
   }
+
+  const handleAddToCart = () => {
+    addToCart(product);
+  };
+
+  const handleToggleWishlist = () => {
+    toggleWishlist(product.id);
+  };
+
+  const isLiked = isInWishlist(product.id);
 
   const relatedProducts = products.filter(
     (p) => p.categoryId === product.categoryId && p.id !== product.id
@@ -135,15 +152,64 @@ export default function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
         <div className="lg:col-span-2">
-          <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
+          <h1 className="text-3xl font-bold mb-2">{product.title}</h1>
+          {product.brand && (
+            <p className="text-sm text-gray-600 mb-2">Brand: {product.brand}</p>
+          )}
+          <div className="flex items-center mb-4">
+            <div className="flex items-center">
+              {[...Array(5)].map((_, i) => (
+                <svg
+                  key={i}
+                  className={`w-5 h-5 ${
+                    product.rating && i < product.rating ? "text-yellow-400" : "text-gray-300"
+                  }`}
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.817 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                </svg>
+              ))}
+            </div>
+            {product.reviewsCount && (
+              <p className="ml-2 text-sm text-gray-500">({product.reviewsCount} reviews)</p>
+            )}
+          </div>
+          <p className="text-3xl text-gray-900 mb-4">
+            {product.salePrice ? (
+              <>
+                <span className="text-red-500">${product.salePrice.toFixed(2)}</span>
+                <span className="line-through ml-2 text-gray-500">${product.price.toFixed(2)}</span>
+              </>
+            ) : (
+              `$${product.price.toFixed(2)}`
+            )}
+          </p>
+          {product.stock !== undefined && (
+            <p className="text-sm text-gray-600 mb-4">
+              Status: <span className={product.stock > 0 ? "text-green-600" : "text-red-600"}>
+                {product.stock > 0 ? "In Stock" : "Out of Stock"}
+              </span>
+              {product.stock > 0 && ` (${product.stock} available)`}
+            </p>
+          )}
+          {product.unitsSold && (
+            <p className="text-sm text-gray-600 mb-4">{product.unitsSold} units sold</p>
+          )}
           {/* Color and Size options can be added here */}
           <div className="flex items-center space-x-4 mb-4">
-            <button className="flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+            <button
+              onClick={handleAddToCart}
+              className="flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            >
               <ShoppingCart className="mr-2" size={20} />
               Add to Cart
             </button>
-            <button className="flex items-center justify-center px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
-              <Heart className="mr-2" size={20} />
+            <button
+              onClick={handleToggleWishlist}
+              className="flex items-center justify-center px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+            >
+              <Heart className={`mr-2 ${isLiked ? "fill-red-500 text-red-500" : ""}`} size={20} />
               Save
             </button>
             <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">

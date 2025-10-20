@@ -20,7 +20,7 @@ const bannerImages = [
 
 const BannerCarousel = () => {
   return (
-    <div className="rounded-lg overflow-hidden">
+    <div className="rounded-lg overflow-hidden -z-10">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         spaceBetween={0}
@@ -29,10 +29,11 @@ const BannerCarousel = () => {
         pagination={{ clickable: true }}
         autoplay={{ delay: 5000 }}
         loop={true}
+        style={{ zIndex: 1 }}
       >
         {bannerImages.map((src, index) => (
           <SwiperSlide key={index}>
-            <div className="relative h-64 md:h-96">
+            <div className="relative h-64 md:h-96 -z-10">
               <Image
                 src={src}
                 alt={`Banner image ${index + 1}`}

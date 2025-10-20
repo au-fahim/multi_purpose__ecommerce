@@ -7,11 +7,16 @@ import useCart from "@/app/hooks/useCart";
 import useAuth from "@/app/hooks/useAuth";
 import useWishlist from "@/app/hooks/useWishlist";
 import SearchBar from "./searchbar";
+import { useCartStore } from '@/app/store/cartStore';
+import { useWishlistStore } from '@/app/store/wishlistStore';
 
 const Header = () => {
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
   const { isAuthenticated } = useAuth();
+
+  const cartHasHydrated = useCartStore.persist.hasHydrated();
+  const wishlistHasHydrated = useWishlistStore.persist.hasHydrated();
 
   console.log("Header - cartCount:", cartCount);
   console.log("Header - wishlistCount:", wishlistCount);
@@ -36,7 +41,7 @@ const Header = () => {
                 className="text-gray-500 hover:text-gray-700 relative"
               >
                 <Heart className="h-6 w-6" />
-                {wishlistCount > 0 && (
+                {wishlistHasHydrated && wishlistCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                     {wishlistCount}
                   </span>
@@ -47,7 +52,7 @@ const Header = () => {
                 className="text-gray-500 hover:text-gray-700 relative"
               >
                 <ShoppingBag className="h-6 w-6" />
-                {cartCount > 0 && (
+                {cartHasHydrated && cartCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                     {cartCount}
                   </span>
@@ -90,7 +95,7 @@ const Header = () => {
               className="text-gray-500 hover:text-gray-700 relative"
             >
               <Heart className="h-6 w-6" />
-              {wishlistCount > 0 && (
+              {wishlistHasHydrated && wishlistCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {wishlistCount}
                 </span>
@@ -101,7 +106,7 @@ const Header = () => {
               className="text-gray-500 hover:text-gray-700 relative"
             >
               <ShoppingBag className="h-6 w-6" />
-              {cartCount > 0 && (
+              {cartHasHydrated && cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cartCount}
                 </span>

@@ -23,7 +23,9 @@ export default function Home() {
         </div>
 
         <div
-          className={`${isMenuVisible ? "block" : "hidden"} lg:block sticky top-20`}
+          className={`${
+            isMenuVisible ? "block" : "hidden"
+          } lg:block sticky top-20`}
         >
           <CategoryMenu />
         </div>
@@ -33,7 +35,7 @@ export default function Home() {
         <PopularCategories />
         <TrendingProducts />
         <MostSoldItems />
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </ShopLayout>
   );

@@ -9,59 +9,54 @@ import {
   getCategoriesByParentId,
   Category,
 } from "@/app/lib/data";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronDown } from "lucide-react";
 
 const CategoryMenu = () => {
-  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
+  const [openCategoryId, setOpenCategoryId] = useState<string | null>(null);
   const parentCategories = categories.filter((category) => !category.parentId);
 
-  const handleMouseEnter = (categoryId: string) => {
-    setActiveCategoryId(categoryId);
-  };
-
-  const handleMouseLeave = () => {
-    setActiveCategoryId(null);
+  const handleToggleSubMenu = (categoryId: string) => {
+    setOpenCategoryId(openCategoryId === categoryId ? null : categoryId);
   };
 
   const renderSubCategories = (subCategories: Category[]) => {
     if (subCategories.length === 0) return null;
     return (
-      <div className="absolute left-full top-0 mt-0 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-        <div className="py-1">
-          {subCategories.map((subCategory) => (
+      <ul className="ml-4 mt-1 space-y-1">
+        {subCategories.map((subCategory) => (
+          <li key={subCategory.id}>
             <Link
-              key={subCategory.id}
               href={`/shop/${subCategory.slug}`}
-              className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
+              className="flex items-center p-2 rounded-lg hover:bg-gray-100 text-gray-700"
             >
               {subCategory.name}
             </Link>
-          ))}
-        </div>
-      </div>
+          </li>
+        ))}
+      </ul>
     );
   };
 
   return (
     <div
       className="relative w-full bg-gray-50 p-4 rounded-lg"
-      onMouseLeave={handleMouseLeave}
     >
       <h2 className="text-lg font-bold mb-4">Categories</h2>
       <ul className="space-y-1">
         {parentCategories.map((category) => {
           const subCategories = getCategoriesByParentId(category.id);
+          const isOpen = openCategoryId === category.id;
+
           return (
             <li
               key={category.id}
               className="relative"
-              onMouseEnter={() => handleMouseEnter(category.id)}
             >
-              <Link
-                href={`/shop/${category.slug}`}
-                className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-200"
-              >
-                <div className="flex items-center">
+              <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-200">
+                <Link
+                  href={`/shop/${category.slug}`}
+                  className="flex items-center flex-grow"
+                >
                   <Image
                     src={category.image || "/images/placeholder.svg"}
                     alt={category.name}
@@ -70,11 +65,17 @@ const CategoryMenu = () => {
                     className="w-10 h-10 object-cover rounded-md mr-3"
                   />
                   <span className="font-medium text-gray-700">{category.name}</span>
-                </div>
-                {subCategories.length > 0 && <ChevronRight size={16} />}
-              </Link>
-              {activeCategoryId === category.id &&
-                renderSubCategories(subCategories)}
+                </Link>
+                {subCategories.length > 0 && (
+                  <button
+                    onClick={() => handleToggleSubMenu(category.id)}
+                    className="p-1 rounded-full hover:bg-gray-300"
+                  >
+                    {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                  </button>
+                )}
+              </div>
+              {isOpen && renderSubCategories(subCategories)}
             </li>
           );
         })}
