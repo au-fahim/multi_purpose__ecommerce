@@ -2,24 +2,23 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { ShoppingBag, Heart, User } from "lucide-react";
 import useCart from "@/app/hooks/useCart";
 import useAuth from "@/app/hooks/useAuth";
 import useWishlist from "@/app/hooks/useWishlist";
 import SearchBar from "./searchbar";
-import { useCartStore } from '@/app/store/cartStore';
-import { useWishlistStore } from '@/app/store/wishlistStore';
+import { useCartStore } from "@/app/store/cartStore";
+import { useWishlistStore } from "@/app/store/wishlistStore";
 
 const Header = () => {
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const cartHasHydrated = useCartStore.persist.hasHydrated();
   const wishlistHasHydrated = useWishlistStore.persist.hasHydrated();
-
-  console.log("Header - cartCount:", cartCount);
-  console.log("Header - wishlistCount:", wishlistCount);
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -58,15 +57,45 @@ const Header = () => {
                   </span>
                 )}
               </Link>
-              <Link
-                href="/"
-                className="text-gray-500 hover:text-gray-700 relative"
-              >
-                <User className="h-6 w-6" />
-                {isAuthenticated && (
-                  <span className="absolute -top-1 -right-1 bg-green-500 rounded-full h-3 w-3" />
-                )}
-              </Link>
+              {isAuthenticated ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center space-x-2 text-gray-500 hover:text-gray-700"
+                  >
+                    <span>Hello, {user?.name?.split(' ')[0]}</span>
+                  </button>
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                      <Link
+                        href="/dashboard"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Dashboard
+                      </Link>
+                      <Link
+                        href="/orders"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Orders
+                      </Link>
+                      <button
+                        onClick={logout}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  Login
+                </Link>
+              )}
             </div>
           </div>
           <div className="py-2">
@@ -112,15 +141,45 @@ const Header = () => {
                 </span>
               )}
             </Link>
-            <Link
-              href="/"
-              className="text-gray-500 hover:text-gray-700 relative"
-            >
-              <User className="h-6 w-6" />
-              {isAuthenticated && (
-                <span className="absolute -top-1 -right-1 bg-green-500 rounded-full h-3 w-3" />
-              )}
-            </Link>
+            {isAuthenticated ? (
+              <div className="relative">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center space-x-2 text-gray-500 hover:text-gray-700"
+                >
+                  <span>Hello, {user?.name?.split(' ')[0]}</span>
+                </button>
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                    <Link
+                      href="/dashboard"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      href="/orders"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Orders
+                    </Link>
+                    <button
+                      onClick={logout}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="text-gray-500 hover:text-gray-700"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </div>
